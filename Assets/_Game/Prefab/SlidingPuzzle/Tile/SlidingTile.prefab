@@ -126,8 +126,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 3
-  m_fontSizeBase: 3
+  m_fontSize: 5
+  m_fontSizeBase: 5
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -293,8 +293,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entityComponents:
   - {fileID: 5800734405899549615}
-  tileIndex: 0
   currentGridPosition: {x: 0, y: 0}
+  completeGridPos: {x: 0, y: 0}
 --- !u!114 &5800734405899549615
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ namespace MH.Puzzle.SlidingTile
 
         #region ----------- Public Methods --------
 
-        public void RegisterBoard(SlidingPuzzleBoard board)
+        public void Initialize(SlidingPuzzleBoard board)
         {
             _board = board;
         }

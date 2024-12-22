@@ -1,23 +1,50 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MH.Puzzle.SlidingTile
 {
-    public class SlidingPuzzleBoard : BasePuzzle
+    public class SlidingPuzzleBoard : BaseEntity
     {
-        [SerializeField] private int gridWidth = 3;
-        [SerializeField] private int gridHeight = 3;
+        public enum BoardState
+        {
+            Empty,
+            Playing,
+            Finished,
+        }
+        
+        #region --------- Inspectors ----------s
+
         [SerializeField] private TileMovementConfig movementConfig = TileMovementConfig.Default;
+
+        #endregion
+
+        #region ------------ Properties ----------
 
         private Dictionary<Vector2Int, SlidingSlot> _slotMap = new();
         private List<SlidingTile> _tiles = new();
-        private Vector2Int _emptySlotPosition;
+
+        private BoardState _boardState = BoardState.Empty;
+        
+        public TileMovementConfig TileMovementConfig => movementConfig;
+        public BoardState State => _boardState;
+        
+        public Action OnFinished;
+        
+        #endregion
+
+        #region ---------- Unity Methods -------------
 
         protected override void Awake()
         {
             base.Awake();
             InitializeBoard();
         }
+
+        #endregion
+
+                
 
         private void InitializeBoard()
         {
@@ -27,26 +54,17 @@ namespace MH.Puzzle.SlidingTile
             {
                 Vector2Int pos = slot.GetGridPos();
                 _slotMap[pos] = slot;
-                slot.RegisterBoard(this);
+                slot.Initialize(this);
             }
 
             // Initialize tiles
-            _tiles.AddRange(GetComponentsInChildren<SlidingTile>());
+            _tiles = GetComponentsInChildren<SlidingTile>().ToList();
             for (int i = 0; i < _tiles.Count; i++)
             {
-                _tiles[i].RegisterBoard(this);
-                _tiles[i].Initialize(i);
+                _tiles[i].Initialize(this);
             }
 
-            // Find empty slot
-            foreach (var kvp in _slotMap)
-            {
-                if (kvp.Value.IsEmpty())
-                {
-                    _emptySlotPosition = kvp.Key;
-                    break;
-                }
-            }
+            
         }
 
         public SlidingSlot GetSlot(Vector2Int gridPos)
@@ -54,6 +72,20 @@ namespace MH.Puzzle.SlidingTile
             return _slotMap.TryGetValue(gridPos, out var slot) ? slot : null;
         }
 
+        public void EnterPuzzle()
+        {
+            _boardState = BoardState.Playing;
+        }
+
+        public void ExitPuzzle()
+        {
+            if( _boardState == BoardState.Playing)
+            {
+                _boardState = BoardState.Empty;
+            }
+            
+        }
+        
         public void CheckWinCondition()
         {
             bool isWin = true;
@@ -61,6 +93,11 @@ namespace MH.Puzzle.SlidingTile
             {
                 // Add your win condition logic here
                 // For example, check if each tile is in its correct position
+                if (tile.IsOnCompletePos() == false)
+                {
+                    isWin = false;
+                    return;
+                }
             }
 
             if (isWin)
@@ -71,8 +108,12 @@ namespace MH.Puzzle.SlidingTile
 
         protected virtual void OnPuzzleComplete()
         {
+            _boardState = BoardState.Finished;
+            
             // Implement puzzle completion logic
             Debug.Log("Puzzle Completed!");
+            
+            OnFinished?.Invoke();
         }
     }
 }

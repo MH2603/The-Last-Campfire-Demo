@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
 using DG.Tweening;
+using MH.Extentions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -34,8 +36,8 @@ namespace MH.Puzzle.SlidingTile
 
     public class SlidingTile : BaseEntity
     {
-        [SerializeField] private int tileIndex;
         [SerializeField] private Vector2Int currentGridPosition;
+        [SerializeField] private Vector2Int completeGridPos;
 
         private SlidingPuzzleBoard _board;
         private ClickableHandler _clickableHandler;
@@ -59,21 +61,26 @@ namespace MH.Puzzle.SlidingTile
             _clickableHandler.OnDownMouse += OnPointerDown;
             _clickableHandler.OnExitMouse += OnPointerExit;
         }
-
-        public void RegisterBoard(SlidingPuzzleBoard board)
+        
+        public void Initialize(SlidingPuzzleBoard board)
         {
             _board = board;
+
+            transform.position = _board.GetSlot(currentGridPosition).GetTileAnchorPos();
+            _movementConfig = _board.TileMovementConfig;
+            
+            
         }
 
-        public void Initialize(int index)
+        public bool IsOnCompletePos()
         {
-            tileIndex = index;
-            // currentGridPosition = startPosition;
+            return currentGridPosition == completeGridPos;
         }
+            
 
         private void OnPointerDown(PointerEventData eventData)
         {
-            if (_isMoving) return;
+            if (_isMoving || _board.State != SlidingPuzzleBoard.BoardState.Playing) return;
 
             _dragStartPosition = eventData.position;
             _tileStartPosition = currentGridPosition;
@@ -130,7 +137,7 @@ namespace MH.Puzzle.SlidingTile
             }
         }
 
-        private void StartMove(SlidingSlot targetSlot)
+        private async void StartMove(SlidingSlot targetSlot)
         {
             _isMoving = true;
             SlidingSlot currentSlot = _board.GetSlot(currentGridPosition);
@@ -147,7 +154,13 @@ namespace MH.Puzzle.SlidingTile
             transform.DOKill();
             transform.DOMove(targetSlot.GetTileAnchorPos(), _movementConfig.moveTime).SetEase(Ease.Linear);
 
+            // wait for a time 
+            await Task.Delay( FloatExtentions.ToMiniSeconds(_movementConfig.moveTime) );
+
+            transform.position = targetSlot.GetTileAnchorPos();
             _isMoving = false;
+            
+            
             _board.CheckWinCondition();
         }
     }
