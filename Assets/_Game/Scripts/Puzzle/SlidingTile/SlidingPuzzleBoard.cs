@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace MH.Puzzle.SlidingTile
 {
@@ -17,7 +18,9 @@ namespace MH.Puzzle.SlidingTile
         #region --------- Inspectors ----------s
 
         [SerializeField] private TileMovementConfig movementConfig = TileMovementConfig.Default;
-
+        public UnityEvent OnEnter;
+        public UnityEvent OnFinished;
+        public UnityEvent OnExit;
         #endregion
 
         #region ------------ Properties ----------
@@ -30,7 +33,6 @@ namespace MH.Puzzle.SlidingTile
         public TileMovementConfig TileMovementConfig => movementConfig;
         public BoardState State => _boardState;
         
-        public Action OnFinished;
         
         #endregion
 
@@ -75,6 +77,8 @@ namespace MH.Puzzle.SlidingTile
         public void EnterPuzzle()
         {
             _boardState = BoardState.Playing;
+            
+            OnEnter?.Invoke();
         }
 
         public void ExitPuzzle()
@@ -84,6 +88,7 @@ namespace MH.Puzzle.SlidingTile
                 _boardState = BoardState.Empty;
             }
             
+            OnExit?.Invoke();
         }
         
         public void CheckWinCondition()

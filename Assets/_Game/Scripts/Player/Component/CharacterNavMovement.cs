@@ -28,6 +28,8 @@ namespace MH.Component
         
         private MovementState _movementState;
         private Vector3 _currentDestination;
+        private bool _isLocking;
+        
 
         #endregion
 
@@ -49,6 +51,8 @@ namespace MH.Component
 
         public void MoveTo(Vector3 targetPos)
         {
+            if(_isLocking) return;
+            
             _movementState = MovementState.Moving;
             
             _navMeshAgent.isStopped = false;
@@ -62,6 +66,12 @@ namespace MH.Component
             
             _navMeshAgent.isStopped = true;
             _navMeshAgent.speed = 0f;
+        }
+
+
+        public void SetLock(bool isLocking)
+        {
+            _isLocking = isLocking;
         }
 
         #endregion

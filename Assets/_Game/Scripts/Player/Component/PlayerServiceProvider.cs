@@ -6,12 +6,14 @@ namespace MH.Component
     public class PlayerServiceProvider : EntityComponent, IGameService
     {
         
-        [HideInInspector] public CharacterNavMovement characterNavMovement;
+        [FormerlySerializedAs("characterNavMovement")] [HideInInspector] public CharacterNavMovement CharacterNavMovement;
         [FormerlySerializedAs("PlayerRoot")] [HideInInspector] public Transform PlayerTransform;
+        [HideInInspector] public PlayerEntity PlayerEntity => (PlayerEntity)baseEntity;
+        
         public override void ManualStart()
         {
             PlayerTransform = baseEntity.transform;
-            characterNavMovement = baseEntity.Get<CharacterNavMovement>();
+            CharacterNavMovement = baseEntity.Get<CharacterNavMovement>();
             
             ServiceLocator.Instance.RegisterService(this);
         }
