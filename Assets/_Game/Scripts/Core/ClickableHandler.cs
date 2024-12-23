@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using System;
 
-namespace MH.Puzzle.SlidingTile
+namespace MH
 {
     public class ClickableHandler : EntityComponent, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, IDragHandler
     {

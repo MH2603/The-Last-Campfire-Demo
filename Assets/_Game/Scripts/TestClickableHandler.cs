@@ -1,24 +1,24 @@
 
-
-using System;
-using MH.Puzzle.SlidingTile;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TestClickableHandler : MonoBehaviour
+namespace  MH
 {
-    public ClickableHandler handler;
-
-    private void Start()
+    public class TestClickableHandler : MonoBehaviour
     {
-        handler.OnDownMouse += MouseDown;
-    }
+        public ClickableHandler handler;
 
-    private void MouseDown(PointerEventData eventData)
-    {
-        Debug.Log($" Test : {eventData.button} "  );
+        private void Start()
+        {
+            handler.OnDownMouse += MouseDown;
+        }
+
+        private void MouseDown(PointerEventData eventData)
+        {
+            Debug.Log($" Test : {eventData.button} "  );
+        }
+
     }
-        
-        
-        
 }
+
+
