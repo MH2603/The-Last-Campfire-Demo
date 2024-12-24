@@ -1,3 +1,4 @@
+using System;
 using MH.Component;
 using MH.Puzzle.SlidingTile;
 using UnityEngine;
@@ -25,6 +26,8 @@ namespace MH
 
         #endregion
 
+        #region  ---------- Unity Methods ----------
+
         protected override void Start()
         {
             base.Start();
@@ -38,18 +41,28 @@ namespace MH
         }
 
 
-        public bool CanInteract()
+        private void OnTriggerExit(Collider other)
         {
-            if (_playerServiceProvider == null)
+            if (other.CompareTag("Player"))
             {
-                _playerServiceProvider = ServiceLocator.Instance.GetService<PlayerServiceProvider>();
+                Interact();
             }
-            
-            _interactionEventData.Player = _playerServiceProvider.PlayerEntity;
-            _interactionEventData.Interactable = this;
-
-            return _interactionConfig.AreAllConditionsMet(_interactionEventData);
         }
+
+        #endregion
+        
+        public bool CanInteract()
+                {
+                    if (_playerServiceProvider == null)
+                    {
+                        _playerServiceProvider = ServiceLocator.Instance.GetService<PlayerServiceProvider>();
+                    }
+                    
+                    _interactionEventData.Player = _playerServiceProvider.PlayerEntity;
+                    _interactionEventData.Interactable = this;
+        
+                    return _interactionConfig.AreAllConditionsMet(_interactionEventData);
+                }
 
         public void Interact()
         {
@@ -71,6 +84,8 @@ namespace MH
                 maxSize: 50 // Maximum size of the pool
             );
         }
+        
+        
         
     }
 }
